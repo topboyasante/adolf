@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/pelletier/go-toml"
 	"github.com/topboyasante/adolf/internal/actions"
@@ -81,17 +82,6 @@ func initAction(c *cli.Context) error {
 	return nil
 }
 
-func readAdolfConfig(filepath string) string {
-	dat, err := os.ReadFile(filepath)
-
-	if err != nil {
-		log.Fatal("Could not find config.adolf.toml file")
-		os.Exit(1)
-	}
-
-	return string(dat)
-}
-
 func GenerateWithConfigAction(c *cli.Context) {
 
 	folders := []string{
@@ -120,15 +110,21 @@ func GenerateWithConfigAction(c *cli.Context) {
 
 	configFilePath := c.Args().Get(2)
 
-	configFile := readAdolfConfig(configFilePath)
+	filep := filepath.Join(configFilePath, "config.toml")
 
-	var cfg templates.AdolfDBConfig
-	err := toml.Unmarshal([]byte(configFile), &cfg)
+	file, err := os.ReadFile(filep)
 	if err != nil {
-		log.Fatal("Failed to load toml file: ", err)
+		log.Fatal("Could not read the file: ", err)
 	}
 
-	// TODO poll the variables and generate database config from that.
+	var cfg templates.AdolfDBConfig
+	err = toml.Unmarshal([]byte(file), &cfg)
+	if err != nil {
+		log.Fatal("Failed to Unmarshal toml file: ", err)
+	}
+
+	log.Println("Loaded configuration values: ", cfg)
+
 	configTemplate := templates.GenerateDBConfigTemplate(cfg)
 
 	actions.InitializeSetup()
