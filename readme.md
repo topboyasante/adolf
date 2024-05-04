@@ -17,3 +17,4 @@ Adolf is a CLI application that bootstraps a web application in go. Instead of s
 - You will be asked to provide a module name during the setup.
 - When the setup is complete, run `go mod tidy` to install the neccessary packages used.
 - In all import statements, replace `module_name` with the name of your module.
+- In `config/app.go`, replace `user:password@/db-name?charset=utf8&parseTime=True&loc=Local` with an actual connection string

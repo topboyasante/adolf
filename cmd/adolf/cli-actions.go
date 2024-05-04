@@ -29,7 +29,8 @@ func initAction(c *cli.Context) error {
 	routeTemplate := templates.GenerateRouteTemplate()
 	configTemplate := templates.GenerateDBConfigTemplate()
 	mainTemplate := templates.GenerateMainTemplate()
-	utilsTemplate := templates.GenerateUtilsemplate()
+	utilsTemplate := templates.GenerateUtilsTemplate()
+	controllerTemplate := templates.GenerateControllerTemplate()
 
 	actions.InitializeSetup()
 
@@ -61,6 +62,10 @@ func initAction(c *cli.Context) error {
 		case "internal/routes/routes.go":
 			{
 				actions.CreateFile(value, routeTemplate, 0750)
+			}
+		case "internal/controllers/demo_controller.go":
+			{
+				actions.CreateFile(value, controllerTemplate, 0750)
 			}
 		default:
 			{

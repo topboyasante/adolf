@@ -14,14 +14,14 @@ func GenerateMainTemplate() string {
 
 	func main() {
 		r := mux.NewRouter()
-		routes.RegisteModelAPIRoutes(r)
+		routes.RegisterModelAPIRoutes(r)
 		http.Handle("/", r)
 		log.Fatal(http.ListenAndServe("localhost:9010", r))
 	}
 	`
 	return mainTemplate
 }
-func GenerateUtilsemplate() string {
+func GenerateUtilsTemplate() string {
 	utilsTemplate := `
 	package utils
 
@@ -40,6 +40,95 @@ func GenerateUtilsemplate() string {
 	}
 	`
 	return utilsTemplate
+}
+func GenerateControllerTemplate() string {
+	controllerTemplate := `
+	package controllers
+
+	import (
+		"encoding/json"
+		"fmt"
+		"github.com/gorilla/mux"
+		"module_name/internal/models"
+		"module_name/internal/utils"
+		"net/http"
+		"strconv"
+	)
+
+
+	func GetModels(w http.ResponseWriter, r *http.Request) {
+		newModels := models.GetAllModels()
+		res, _ := json.Marshal(newModels)
+		w.Header().Set("Content-Type", "pkglication/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+
+	func GetModelById(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		ModelId := vars["modelId"]
+		ID, err := strconv.ParseInt(ModelId, 0, 0)
+
+		if err != nil {
+			fmt.Println("Error while parsing")
+		}
+		ModelDetails, _ := models.GetModelById(ID)
+
+		res, _ := json.Marshal(ModelDetails)
+		w.Header().Set("Content-Type", "pkglication/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+
+	func CreateModel(w http.ResponseWriter, r *http.Request) {
+		CreatedModel := &models.Model{}
+		utils.ParseBody(r, CreatedModel)
+
+		m := CreatedModel.CreateModel()
+
+		res, _ := json.Marshal(m)
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+
+	func DeleteModel(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		ModelId := vars["ModelId"]
+		ID, err := strconv.ParseInt(ModelId, 0, 0)
+
+		if err != nil {
+			fmt.Println("Error while parsing")
+		}
+
+		deletedModel := models.DeleteModel(ID)
+
+		res, _ := json.Marshal(deletedModel)
+		w.Header().Set("Content-Type", "pkglication/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+
+	func UpdateModel(w http.ResponseWriter, r *http.Request) {
+		var UpdateModel = &models.Model{}
+		utils.ParseBody(r, UpdateModel)
+		vars := mux.Vars(r)
+		ModelId := vars["ModelId"]
+		ID, err := strconv.ParseInt(ModelId, 0, 0)
+		if err != nil {
+			fmt.Println("Error while parsing")
+		}
+		ModelDetails, db := models.GetModelById(ID)
+		if UpdateModel.Name != "" {
+			ModelDetails.Name = UpdateModel.Name
+		}
+		db.Save(&ModelDetails)
+		res, _ := json.Marshal(ModelDetails)
+		w.Header().Set("Content-Type", "pkglication/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+	`
+	return controllerTemplate
 }
 
 func GenerateDBConfigTemplate() string {
@@ -88,6 +177,7 @@ func GenerateModelTemplate() string {
 		//You can embed gorm.Model directly in your structs to include these fields automatically
 
 		gorm.Model
+		Name        string
 	}
 	
 	func init() {
@@ -135,7 +225,7 @@ func GenerateRouteTemplate() string {
 	
 	var RegisterModelAPIRoutes = func(r *mux.Router) {
 		r.HandleFunc("/model/", controllers.CreateModel).Methods("POST")
-		r.HandleFunc("/model/", controllers.GetModel).Methods("GET")
+		r.HandleFunc("/model/", controllers.GetModels).Methods("GET")
 		r.HandleFunc("/model/{modelId}", controllers.GetModelById).Methods("GET")
 		r.HandleFunc("/model/{modelId}", controllers.UpdateModel).Methods("PUT")
 		r.HandleFunc("/model/{modelId}", controllers.DeleteModel).Methods("DELETE")
