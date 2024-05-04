@@ -1,5 +1,7 @@
 package templates
 
+import "fmt"
+
 func GenerateMainTemplate() string {
 	mainTemplate := `
 	package main
@@ -131,7 +133,7 @@ func GenerateControllerTemplate() string {
 	return controllerTemplate
 }
 
-func GenerateDBConfigTemplate() string {
+func GenerateDBConfigDefaultTemplate() string {
 	DBConfigTemplate := `
 	package config
 
@@ -158,6 +160,112 @@ func GenerateDBConfigTemplate() string {
 	}
 	`
 	return DBConfigTemplate
+}
+
+func GenerateDBConfigTemplate(dbConfig AdolfDBConfig) string {
+	switch dbConfig.DBName {
+	case POSTGRES.String():
+		DBConfigTemplate := `
+		package config
+	
+		import (
+			"gorm.io/driver/postgres"
+			"gorm.io/gorm"
+		
+			"log"
+		)
+		
+		var (
+			db *gorm.DB
+		)
+		
+		func Connect() {
+			dsn := "host=%s user=%s password=%s dbname=%s port=%d"
+		
+			d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+			if err != nil {
+				log.Fatal("Database error: ", err)
+			}
+		
+			db = d
+		}
+		
+		func GetDB() *gorm.DB {
+			return db
+		}	
+		`
+		formatted := fmt.Sprintf(string(DBConfigTemplate), dbConfig.Host, dbConfig.User, dbConfig.Password, dbConfig.DBName, dbConfig.Port)
+
+		return formatted
+	case MYSQL.String():
+		DBConfigTemplate := `
+		package config
+	
+		import (
+			"gorm.io/driver/mysql"
+			"gorm.io/gorm"
+		
+			"log"
+		)
+		
+		var (
+			db *gorm.DB
+		)
+		
+		func Connect() {
+			dsn := "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
+		
+			d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+			if err != nil {
+				log.Fatal("Database error: ", err)
+			}
+		
+			db = d
+		}
+		
+		func GetDB() *gorm.DB {
+			return db
+		}	
+		`
+		formatted := fmt.Sprintf(string(DBConfigTemplate), dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.DBName)
+
+		return formatted
+	case SQLITE.String():
+		DBConfigTemplate := `
+		package config
+	
+		import (
+			"gorm.io/driver/sqlite" // Sqlite driver based on CGO
+			// "github.com/glebarez/sqlite" // Pure go SQLite driver, checkout https://github.com/glebarez/sqlite for details
+			"gorm.io/gorm"
+		
+			"log"
+		)
+		
+		var (
+			db *gorm.DB
+		)
+		
+		func Connect() {
+			d, err := gorm.Open(sqlite.Open("%s.db"), &gorm.Config{})
+			if err != nil {
+				log.Fatal("Database error: ", err)
+			}
+		
+			db = d
+		}
+		
+		func GetDB() *gorm.DB {
+			return db
+		}	
+		`
+		formatted := fmt.Sprintf(string(DBConfigTemplate), dbConfig.DBName)
+
+		return formatted
+	default:
+		return GenerateDBConfigDefaultTemplate()
+	}
+
 }
 
 func GenerateModelTemplate() string {
