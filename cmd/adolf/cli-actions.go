@@ -4,9 +4,23 @@ import (
 	"github.com/topboyasante/adolf/internal/actions"
 	"github.com/topboyasante/adolf/internal/templates"
 	"github.com/urfave/cli"
+
 	"log"
 	"os"
+
+	"github.com/pelletier/go-toml"
 )
+
+func readAdolfConfig(filepath string) string {
+	dat, err := os.ReadFile(filepath)
+
+	if err != nil {
+		log.Fatal("Could not find config.adolf.toml file")
+		os.Exit(1)
+	}
+
+	return string(dat)
+}
 
 func initAction(c *cli.Context) error {
 	folders := []string{
@@ -17,6 +31,7 @@ func initAction(c *cli.Context) error {
 		"internal/controllers",
 		"internal/utils",
 	}
+
 	files := []string{
 		"cmd/main/main.go",
 		"internal/config/app.go",
@@ -25,12 +40,23 @@ func initAction(c *cli.Context) error {
 		"internal/models/demo_model.go",
 		"internal/controllers/demo_controller.go",
 	}
+
 	modelTemplate := templates.GenerateModelTemplate()
 	routeTemplate := templates.GenerateRouteTemplate()
-	configTemplate := templates.GenerateDBConfigTemplate()
 	mainTemplate := templates.GenerateMainTemplate()
 	utilsTemplate := templates.GenerateUtilsTemplate()
 	controllerTemplate := templates.GenerateControllerTemplate()
+
+	configFile := readAdolfConfig("./config.adolf.toml")
+
+	var cfg templates.AdolfDBConfig
+	err := toml.Unmarshal([]byte(configFile), &cfg)
+	if err != nil {
+		log.Fatal("Failed to load toml file: ", err)
+	}
+
+	// TODO poll the variables and generate database config from that.
+	configTemplate := templates.GenerateDBConfigTemplate(cfg)
 
 	actions.InitializeSetup()
 
