@@ -110,7 +110,7 @@ func GenerateWithConfigAction(c *cli.Context) {
 
 	configFilePath := c.Args().Get(2)
 
-	filep := filepath.Join(configFilePath, "config.toml")
+	filep := filepath.Join(configFilePath, "config.adolf.toml")
 
 	file, err := os.ReadFile(filep)
 	if err != nil {

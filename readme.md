@@ -1,22 +1,30 @@
 # Adolf
 
-## About
+### About
 
-Adolf is a CLI application that bootstraps a web application in go. Instead of setting up your backend project from scratch, you can use adolf to do that.
+Adolf is a command-line interface (CLI) tool designed to streamline the setup process for Go web applications. Instead of manually configuring your backend project, Adolf automates the process for you.
 
-### Plans
+## Features
 
-- Initialize a simple backend application with:
-  - routing,
-  - sample models
-  - controllers.
-  - All connected to a database
-- Add command line flags to choose the DB of your choice
+- **Quick Setup**: Initialize a basic backend application with pre-configured routing, sample models, and controllers.
+- **Database Integration**: Automatically connect your application to a database of your choice.
+
+
   
 ### How does it work?
 
-- When you install adolf on your local environment, run `adolf init` to setup your backend project.
-- You will be asked to provide a module name during the setup.
-- When the setup is complete, run `go mod tidy` to install the neccessary packages used.
-- In all import statements, replace `module_name` with the name of your module.
-- In `config/app.go`, replace `user:password@/db-name?charset=utf8&parseTime=True&loc=Local` with an actual connection string
+#### `adolf init`
+- Run this command after installing Adolf to bootstrap your backend project.
+- During setup, provide a name for your module when prompted.
+- After setup completes, execute `go mod tidy` to install required packages.
+- Replace `module_name` with your actual module name in all import statements.
+- Update the database connection string in `config/app.go` with your credentials.
+  
+
+#### `adolf heil`
+- Use `adolf heil config.adolf.toml` to configure your backend project with specific database settings.
+- Adolf references `config.adolf.toml` to determine the database provider for your project.
+- Follow the prompts to provide a module name during setup.
+- Replace `module_name` with your actual module name in all import statements.
+- After setup, execute `go mod tidy` to install necessary packages.
+- Update the database connection string in `config/app.go` with your credentials.
