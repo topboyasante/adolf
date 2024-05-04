@@ -93,7 +93,7 @@ func GenerateControllerTemplate() string {
 
 	func DeleteModel(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		ModelId := vars["ModelId"]
+		ModelId := vars["modelId"]
 		ID, err := strconv.ParseInt(ModelId, 0, 0)
 
 		if err != nil {
@@ -112,7 +112,7 @@ func GenerateControllerTemplate() string {
 		var UpdateModel = &models.Model{}
 		utils.ParseBody(r, UpdateModel)
 		vars := mux.Vars(r)
-		ModelId := vars["ModelId"]
+		ModelId := vars["modelId"]
 		ID, err := strconv.ParseInt(ModelId, 0, 0)
 		if err != nil {
 			fmt.Println("Error while parsing")
