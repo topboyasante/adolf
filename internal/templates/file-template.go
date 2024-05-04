@@ -131,8 +131,7 @@ func GenerateControllerTemplate() string {
 	return controllerTemplate
 }
 
-func GenerateDBConfigTemplate(dbConfig AdolfDBConfig) string {
-	// TODO use dbConfig to generate DBConfigTemplate file.
+func GenerateDBConfigTemplate() string {
 	DBConfigTemplate := `
 	package config
 
