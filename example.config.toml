@@ -1,0 +1,5 @@
+DBName="postgres"
+Host="localhost"
+User="user"
+Password="prince"
+Port=5432
