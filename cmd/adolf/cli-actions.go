@@ -22,9 +22,9 @@ func initAction(c *cli.Context) error {
 	fmt.Println("Bootstrapping your web application...")
 
 	for _, value := range folders {
-		createFolderError := os.MkdirAll(value, 0750)
-		if createFolderError != nil {
-			log.Fatal(createFolderError)
+		err := os.MkdirAll(value, 0750)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 
