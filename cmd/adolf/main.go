@@ -19,6 +19,11 @@ func main() {
 			Usage:  "Initialize the web application",
 			Action: initAction,
 		},
+		{
+			Name:   "heil",
+			Usage:  "Initialize the web application with a config.adolf.toml",
+			Action: initAction,
+		},
 	}
 
 	err := app.Run(os.Args)
