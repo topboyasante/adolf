@@ -19,6 +19,11 @@ func main() {
 			Usage:  "Initialize the web application",
 			Action: initAction,
 		},
+		{
+			Name:   "heil",
+			Usage:  "Generate with config file",
+			Action: GenerateWithConfigAction,
+		},
 	}
 
 	err := app.Run(os.Args)
