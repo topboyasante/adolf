@@ -56,7 +56,7 @@ func initAction(c *cli.Context) error {
 	}
 
 	// TODO poll the variables and generate database config from that.
-	configTemplate := templates.GenerateDBConfigTemplate(&cfg)
+	configTemplate := templates.GenerateDBConfigTemplate(cfg)
 
 	actions.InitializeSetup()
 

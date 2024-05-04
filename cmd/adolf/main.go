@@ -22,7 +22,7 @@ func main() {
 		{
 			Name:   "heil",
 			Usage:  "Initialize the web application with a config.adolf.toml",
-			Action: initAction,
+			Action: initAction, // TODO separate to different method
 		},
 	}
 
